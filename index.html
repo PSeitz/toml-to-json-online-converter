@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+  </head>
+  <body>
+    <!-- Note the usage of `type=module` here as this is an ES6 module -->
+    <script type="module">
+
+
+      if (!('WebAssembly' in window)) {
+        alert('you need a browser with wasm support enabled :(');
+      }
+      // Loads a WebAssembly dynamic library, returns a promise.
+      // imports is an optional imports object
+      function loadWebAssembly(filename, imports) {
+        // Fetch the file and compile it
+        return fetch(filename)
+          .then(response => response.arrayBuffer())
+          .then(buffer => WebAssembly.compile(buffer))
+          .then(module => {
+            // Create the imports for the module, including the
+            // standard dynamic library imports
+            imports = imports || {};
+            imports.env = imports.env || {};
+            imports.env.memoryBase = imports.env.memoryBase || 0;
+            imports.env.tableBase = imports.env.tableBase || 0;
+            if (!imports.env.memory) {
+              imports.env.memory = new WebAssembly.Memory({ initial: 256 });
+            }
+            if (!imports.env.table) {
+              imports.env.table = new WebAssembly.Table({ initial: 0, element: 'anyfunc' });
+            }
+            // Create the instance.
+            return new WebAssembly.Instance(module, imports);
+          });
+      }
+      // Main part of this example, loads the module and uses it.
+      loadWebAssembly('./pkg/toml2_json_web_bg.wasm')
+        .then(instance => {
+          var exports = instance.exports; // the exports of that instance
+          var greet = exports._greet; // the "doubler" function (note "_" prefix)
+
+          greet("fredo");
+
+          // now we are ready, set up the button so the user can run the code
+          // var button = document.getElementById('run');
+          // button.value = 'Call a method in the WebAssembly module';
+          // button.addEventListener('click', function() {
+          //   var input = 21;
+          //   alert(input + ' doubled is ' + doubler(input));
+          // }, false);
+        }
+      );
+
+
+      // Use ES module import syntax to import functionality from the module
+      // that we have compiled.
+      //
+      // Note that the `default` import is an initialization function which
+      // will "boot" the module and make it ready to use. Currently browsers
+      // don't support natively imported WebAssembly as an ES module, but
+      // eventually the manual initialization won't be required!
+
+      // fetch('my-file.wasm').then(response =>
+      //     response.arrayBuffer()
+      //   ).then(bytes =>
+      //     WebAssembly.instantiate(bytes)
+      //   ).then(obj => {
+      //       console.log(obj.instance.exports.my_func());
+      //   });
+
+      // let target = {};
+      // WebAssembly.instantiateStreaming(fetch('./pkg/toml2_json_web_bg.wasm'), target)
+      // .then(m => {
+      //   m.greet("fredo");
+      //   // Do something with the results!
+      // });
+
+      // import init, { greet } from './pkg/toml2_json_web.js';
+
+      // async function run() {
+      //   // First up we need to actually load the wasm file, so we use the
+      //   // default export to inform it where the wasm file is located on the
+      //   // server, and then we wait on the returned promise to wait for the
+      //   // wasm to be loaded.
+      //   // It may look like this: `await init('./pkg/without_a_bundler_bg.wasm');`,
+      //   // but there is also a handy default inside `init` function, which uses
+      //   // `import.meta` to locate the wasm file relatively to js file
+      //   //
+      //   // Note that instead of a string here you can also pass in an instance
+      //   // of `WebAssembly.Module` which allows you to compile your own module.
+      //   // Also note that the promise, when resolved, yields the wasm module's
+      //   // exports which is the same as importing the `*_bg` module in other
+      //   // modes
+      //   await init();
+
+      //   // And afterwards we can use all the functionality defined in wasm.
+      //   greet("fredo");
+      //   // console.log(`1 + 2 = ${result}`);
+      //   // if (result !== 3)
+      //   //   throw new Error("wasm addition doesn't work!");
+      // }
+
+      // run();
+    </script>
+  </body>
+</html>

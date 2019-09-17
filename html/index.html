@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+      <title>Online TOML to JSON converter</title>
+
+      <style>
+
+            html {
+              line-height: 1.15; /* 1 */
+              -webkit-text-size-adjust: 100%; /* 2 */
+            }
+            body {
+              margin: 0;
+            }
+            main {
+              display: block;
+            }
+            h1 {
+              font-size: 2em;
+              margin: 0.67em 0;
+            }
+            hr {
+              box-sizing: content-box; /* 1 */
+              height: 0; /* 1 */
+              overflow: visible; /* 2 */
+            }
+            pre {
+              font-family: monospace, monospace; /* 1 */
+              font-size: 1em; /* 2 */
+            }
+            a {
+              background-color: transparent;
+            }
+            abbr[title] {
+              border-bottom: none; /* 1 */
+              text-decoration: underline; /* 2 */
+              text-decoration: underline dotted; /* 2 */
+            }
+            b,
+            strong {
+              font-weight: bolder;
+            }
+            code,
+            kbd,
+            samp {
+              font-family: monospace, monospace; /* 1 */
+              font-size: 1em; /* 2 */
+            }
+            small {
+              font-size: 80%;
+            }
+            sub,
+            sup {
+              font-size: 75%;
+              line-height: 0;
+              position: relative;
+              vertical-align: baseline;
+            }
+            sub {
+              bottom: -0.25em;
+            }
+            sup {
+              top: -0.5em;
+            }
+            img {
+              border-style: none;
+            }
+
+
+            button,
+            input,
+            optgroup,
+            select,
+            textarea {
+              font-family: inherit; /* 1 */
+              font-size: 100%; /* 1 */
+              line-height: 1.15; /* 1 */
+              margin: 0; /* 2 */
+            }
+
+
+            button,
+            input { /* 1 */
+              overflow: visible;
+            }
+
+            button,
+            select { /* 1 */
+              text-transform: none;
+            }
+
+            button,
+            [type="button"],
+            [type="reset"],
+            [type="submit"] {
+              -webkit-appearance: button;
+            }
+
+            button::-moz-focus-inner,
+            [type="button"]::-moz-focus-inner,
+            [type="reset"]::-moz-focus-inner,
+            [type="submit"]::-moz-focus-inner {
+              border-style: none;
+              padding: 0;
+            }
+
+            button:-moz-focusring,
+            [type="button"]:-moz-focusring,
+            [type="reset"]:-moz-focusring,
+            [type="submit"]:-moz-focusring {
+              outline: 1px dotted ButtonText;
+            }
+
+            fieldset {
+              padding: 0.35em 0.75em 0.625em;
+            }
+
+            legend {
+              box-sizing: border-box; /* 1 */
+              color: inherit; /* 2 */
+              display: table; /* 1 */
+              max-width: 100%; /* 1 */
+              padding: 0; /* 3 */
+              white-space: normal; /* 1 */
+            }
+
+            progress {
+              vertical-align: baseline;
+            }
+
+            ::-webkit-file-upload-button {
+              -webkit-appearance: button; /* 1 */
+              font: inherit; /* 2 */
+            }
+
+            details {
+              display: block;
+            }
+
+            summary {
+              display: list-item;
+            }
+
+            template {
+              display: none;
+            }
+
+            .main {
+                max-width: 1300px;
+                margin: 1em auto;
+            }
+
+            #wrapper {
+                margin: 0 1em;
+            }
+
+            #output, #input {
+
+                width: 100%;
+                clear: both;
+                margin: 1em 0;
+                border: 1px solid #999;
+                padding: 2px;
+
+            }
+            #input {
+                min-height: 10em;
+            }
+
+    </style>
+
+      <link rel="icon" type="image/png" href="favicon.png">
+      <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+      <link rel="shortcut icon" href="favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon-144.png">
+      <meta name="apple-mobile-web-app-title" content="toml2json">
+      <meta content="width=device-width" name="viewport">
+
+      <meta name="description" content="Convert TOML to JSON right here on this page.">
+
+      <meta content="Online TOML to JSON" property="og:site_name"><meta content="en_GB" property="og:locale">
+
+      <meta content="Online TOML to JSON" property="og:title">
+      <meta content="Convert TOML to JSON right here on this page" property="og:description">
+      <meta content="website" property="og:type">
+      <meta content="https://toml-to-json.matiaskorhonen.fi/" property="og:url">
+      <meta content="https://toml-to-json.matiaskorhonen.fi/images/facebook.png" property="og:image">
+    </head>
+
+
+  <body>
+    <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+    <script src="./bootstrap.js"></script>
+
+    <div class="main" role="main">
+        <div id="wrapper">
+            <div id="converter">
+                <textarea id="input"></textarea>
+                <div class="center">
+                  <button id="to_json" >Convert TOML to JSON</button>
+                  <button id="to_toml" >Convert JSON to TOML</button>
+                </div>
+                <textarea class="expanding expanding-init" id="output" style="height: 100%;">
+            </div>
+        </div>
+    </div>
+
+  </body>
+</html>
