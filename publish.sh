@@ -1,0 +1,1 @@
+cd html;npm run build;cd ..;git add -A;git commit -am"jawoll new version";git push;git subtree push --prefix html/dist origin gh-pages
