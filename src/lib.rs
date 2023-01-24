@@ -13,9 +13,8 @@ use serde_json::Deserializer;
 use toml::ser::Serializer;
 // use toml::de::Deserializer;
 
-
 #[wasm_bindgen]
-extern {
+extern "C" {
     fn alert(s: &str);
 }
 
@@ -25,17 +24,17 @@ pub fn greet(s: &str) {
 }
 
 #[wasm_bindgen]
-pub fn convert_json_to_toml(input:&str) -> Result<String, JsValue>{
+pub fn convert_json_to_toml(input: &str) -> Result<String, JsValue> {
     // let val: serde_json::Value = serde_json::from_str(input).map_err(|err| JsValue::from_str(&err.to_string()))?;
-
 
     // let reader = BufReader::new(File::open("input.json").unwrap());
     // let writer = BufWriter::new(File::create("output.json").unwrap());
     let mut toml = String::new();
 
     let mut deserializer = Deserializer::from_str(input);
-    let mut serializer = Serializer::pretty(&mut toml);
-    serde_transcode::transcode(&mut deserializer, &mut serializer).map_err(|err| JsValue::from_str(&err.to_string()))?;
+    let serializer = Serializer::pretty(&mut toml);
+    serde_transcode::transcode(&mut deserializer, serializer)
+        .map_err(|err| JsValue::from_str(&err.to_string()))?;
     // serializer.into_inner().flush().map_err(|err| JsValue::from_str(&err.to_string()))?;
 
     // let val: toml::Value = toml::from_str(input).map_err(|err| JsValue::from_str(&err.to_string()))?;
@@ -46,12 +45,13 @@ pub fn convert_json_to_toml(input:&str) -> Result<String, JsValue>{
 }
 
 #[wasm_bindgen]
-pub fn convert_toml_to_json(input:&str) -> Result<String, JsValue>{
-    let val: toml::Value = toml::from_str(input).map_err(|err| JsValue::from_str(&err.to_string()))?;
-    let serde_json = serde_json::to_string_pretty(&val).map_err(|err| JsValue::from_str(&err.to_string()))?;
+pub fn convert_toml_to_json(input: &str) -> Result<String, JsValue> {
+    let val: toml::Value =
+        toml::from_str(input).map_err(|err| JsValue::from_str(&err.to_string()))?;
+    let serde_json =
+        serde_json::to_string_pretty(&val).map_err(|err| JsValue::from_str(&err.to_string()))?;
     Ok(serde_json)
 }
-
 
 #[test]
 fn test_json_to_toml() {
@@ -67,7 +67,6 @@ is_cool = true
     assert_eq!(conv, output);
 }
 
-
 #[test]
 fn test_json_complex_to_toml() {
     let input = r#"{
@@ -77,16 +76,15 @@ fn test_json_complex_to_toml() {
   }
 }"#;
 
-    let output = r#"title = 'TOML Example'
+    let output = r#"title = "TOML Example"
 
 [owner]
-organization = 'GitHub'
+organization = "GitHub"
 "#;
     let conv = convert_json_to_toml(input).unwrap();
 
     assert_eq!(conv, output);
 }
-
 
 #[test]
 fn test_toml_to_json() {
@@ -100,11 +98,25 @@ is_cool = true
   }
 }"#;
 
-
     let conv = convert_toml_to_json(input).unwrap();
     assert_eq!(conv, output);
 }
 
+#[test]
+fn test_json_to_toml_value_after_table() {
+    let input = r#"
+{ "kana": {"ent_seq": "1000000"}, "kanji": [] }
+"#;
+
+    let output = r#"kanji = []
+
+[kana]
+ent_seq = "1000000"
+"#;
+    let conv = convert_json_to_toml(input).unwrap();
+
+    assert_eq!(conv, output);
+}
 
 // #[test]
 // fn test_toml_to_json_error() {
